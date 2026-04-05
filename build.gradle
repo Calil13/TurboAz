@@ -29,7 +29,7 @@ dependencies {
     implementation 'org.postgresql:postgresql:42.7.7'
 
     //Database Migration(liquibase)
-    implementation 'org.liquibase:liquibase-core'
+    //implementation 'org.liquibase:liquibase-core'
 
     //Validation
     implementation 'org.springframework.boot:spring-boot-starter-validation'
@@ -46,7 +46,7 @@ dependencies {
     annotationProcessor 'org.mapstruct:mapstruct-processor:1.6.3'
 
     //Security
-    implementation 'org.springframework.boot:spring-boot-starter-security'
+    //implementation 'org.springframework.boot:spring-boot-starter-security'
 
     //JWT
     implementation 'io.jsonwebtoken:jjwt-api:0.11.5'

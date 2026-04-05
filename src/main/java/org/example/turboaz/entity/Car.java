@@ -1,15 +1,17 @@
 package org.example.turboaz.entity;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.RequiredArgsConstructor;
 import org.example.turboaz.enums.*;
+import org.hibernate.annotations.CreationTimestamp;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 
 @Entity
-@RequiredArgsConstructor
+@AllArgsConstructor
 @NoArgsConstructor
 @Data
 public class Car {
@@ -39,7 +41,7 @@ public class Car {
     private BodyType bodyType;
 
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
+    @Column(name = "door_count", nullable = false, length = 50)
     private DoorCount doorCount;
 
     @Column(nullable = false)
@@ -51,6 +53,21 @@ public class Car {
     @Column(nullable = false)
     private FuelType fuelType;
 
-    @Column(nullable = false)
+    @Column(name = "driver_type", nullable = false, length = 50)
     private DriveType driveType;
+
+    @Column(nullable = false)
+    private Transmission transmission;
+
+    @Column(nullable = false)
+    private EngineCapacity engineCapacity;
+
+    @Column(nullable = false)
+    private Integer power;
+
+    @Column(nullable = false)
+    private Double mileage;
+
+    @CreationTimestamp
+    private LocalDateTime createdAt;
 }

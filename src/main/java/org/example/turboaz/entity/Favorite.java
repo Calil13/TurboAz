@@ -9,16 +9,17 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class Images {
+public class Favorite {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false)
-    private String imageUrl;
-
-    @ManyToOne(optional = false)
+    @ManyToOne
     @JoinColumn(name = "car_id")
     private Car car;
+
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    private Users users;
 }
