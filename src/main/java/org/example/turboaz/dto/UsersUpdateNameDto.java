@@ -5,16 +5,10 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.time.LocalDateTime;
-
 @Data
 @Builder
-@AllArgsConstructor
 @NoArgsConstructor
-public class UserResponseDto {
-
+@AllArgsConstructor
+public class UsersUpdateNameDto {
     private String name;
-    private String phone;
-    private Long viewCount;
-    private LocalDateTime loginDate;
 }

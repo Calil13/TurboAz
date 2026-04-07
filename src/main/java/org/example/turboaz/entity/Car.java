@@ -24,6 +24,9 @@ public class Car {
     @JoinColumn(name = "user_id")
     private Users users;
 
+    @Column(name = "view_count")
+    private Long viewCount = 0L;
+
     @Column(nullable = false)
     private String brand;
 

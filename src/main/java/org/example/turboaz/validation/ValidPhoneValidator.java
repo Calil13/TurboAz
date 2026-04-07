@@ -1,0 +1,22 @@
+package org.example.turboaz.validation;
+
+import jakarta.validation.ConstraintValidator;
+import jakarta.validation.ConstraintValidatorContext;
+
+public class ValidPhoneValidator implements ConstraintValidator<ValidPhone, String> {
+
+    private static final String PHONE_REGEX =
+            "^(50|51|55|70|77|99)[0-9]{7}$";
+
+    @Override
+    public boolean isValid(String phone, ConstraintValidatorContext context) {
+
+        if (phone == null || phone.isBlank()) {
+            return false;
+        }
+
+        String normalizedPhone = phone.replace("-", "");
+
+        return normalizedPhone.matches(PHONE_REGEX);
+    }
+}
