@@ -1,5 +1,6 @@
 package org.example.turboaz.mapper;
 
+import org.example.turboaz.dto.RegisterFinishDto;
 import org.example.turboaz.dto.UserResponseDto;
 import org.example.turboaz.entity.Users;
 import org.mapstruct.Mapper;
@@ -8,4 +9,5 @@ import org.mapstruct.Mapper;
 public interface UsersMapper {
 
     UserResponseDto toDto(Users user);
+    Users toEntity(RegisterFinishDto finishDto);
 }
