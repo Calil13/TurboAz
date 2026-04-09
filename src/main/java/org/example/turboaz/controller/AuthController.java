@@ -23,7 +23,10 @@ public class AuthController {
         return authService.startRegistration(sentOtp);
     }
 
-    public String verifyOtp(EmailVerifyOtpDto verifyOtp) {
-        return null;
+    @PostMapping("/register/verify")
+    public String verifyOtp(@Valid @RequestBody EmailVerifyOtpDto verifyOtp) {
+        return authService.verifyOtp(verifyOtp);
     }
+
+
 }

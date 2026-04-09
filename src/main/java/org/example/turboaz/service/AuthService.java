@@ -30,6 +30,8 @@ public class AuthService {
     }
 
     public String verifyOtp(EmailVerifyOtpDto verifyOtp) {
-
+        otpService.verifyOtp(verifyOtp.getEmail(), verifyOtp.getOtp());
+        log.info("OTP verified.");
+        return "OTP verified.";
     }
 }
