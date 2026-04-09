@@ -2,6 +2,7 @@ package org.example.turboaz.service;
 
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.example.turboaz.entity.OtpCode;
 import org.example.turboaz.exception.BadRequestException;
 import org.example.turboaz.exception.NotFoundException;
@@ -11,6 +12,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 @Transactional
@@ -39,7 +41,8 @@ public class OtpService {
             throw new BadRequestException("Email is invalid or does not exist");
         }
 
-        return "OTP sent successfully!";
+        log.info("OTP sent successfully.");
+        return "OTP sent successfully.";
     }
 
     public void verifyOtp(String email, String Otp) {
@@ -52,12 +55,13 @@ public class OtpService {
         }
 
         if (!otp.getOtp().equals(Otp)) {
-            throw new NotValidException("OTP is wrong!");
+            throw new BadRequestException("OTP is wrong!");
         }
 
         otp.setVerified(true);
         otpRepository.save(otp);
 
+        log.info("OTP verified.");
     }
 
     public boolean isVerified(String email) {

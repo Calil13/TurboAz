@@ -3,8 +3,10 @@ package org.example.turboaz.controller;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.example.turboaz.dto.EmailSentOtp;
+import org.example.turboaz.dto.EmailVerifyOtpDto;
 import org.example.turboaz.service.AuthService;
 import org.hibernate.validator.constraints.Email;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -16,7 +18,12 @@ public class AuthController {
 
     private final AuthService authService;
 
+    @PostMapping("/register/start")
     public String startRegistration(@Valid @RequestBody EmailSentOtp sentOtp) {
+        return authService.startRegistration(sentOtp);
+    }
+
+    public String verifyOtp(EmailVerifyOtpDto verifyOtp) {
         return null;
     }
 }
