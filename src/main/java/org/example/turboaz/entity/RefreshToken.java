@@ -11,6 +11,7 @@ import java.time.LocalDateTime;
 @Entity
 @Table(name = "refresh_token")
 @Data
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
 public class RefreshToken {

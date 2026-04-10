@@ -1,21 +1,21 @@
 package org.example.turboaz.service;
 
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.example.turboaz.dto.EmailSentOtp;
-import org.example.turboaz.dto.EmailVerifyOtpDto;
-import org.example.turboaz.dto.RegisterFinishDto;
+import org.example.turboaz.dto.*;
+import org.example.turboaz.entity.RefreshToken;
 import org.example.turboaz.entity.Users;
 import org.example.turboaz.enums.UsersRole;
-import org.example.turboaz.exception.AlreadyExistsException;
-import org.example.turboaz.exception.BadRequestException;
+import org.example.turboaz.exception.*;
+import org.example.turboaz.jwt.JwtUtil;
 import org.example.turboaz.mapper.UsersMapper;
 import org.example.turboaz.repository.OtpRepository;
+import org.example.turboaz.repository.RefreshTokenRepository;
 import org.example.turboaz.repository.UsersRepository;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.RequestBody;
+
+import java.time.LocalDateTime;
 
 @Service
 @RequiredArgsConstructor
@@ -27,6 +27,8 @@ public class AuthService {
     private final OtpRepository otpRepository;
     private final OtpService otpService;
     private final PasswordEncoder passwordEncoder;
+    private final RefreshTokenRepository refreshTokenRepository;
+    private final JwtUtil jwtUtil;
     
     public String startRegistration(EmailSentOtp sentOtp) {
 
@@ -62,5 +64,36 @@ public class AuthService {
 
         log.info("New user registered. \nEmail: {}", finishDto.getEmail());
         return "Customer successfully registered.";
+    }
+
+    public AuthResponseDto login(LoginRequestDto loginRequestDto) {
+        var user = usersRepository.findByEmail(loginRequestDto.getEmail())
+                .orElseThrow(() -> new NotFoundException("User not found. Please register first."));
+
+        if (user.getUserRole().equals(UsersRole.ADMIN)){
+            log.error("Admin must log in using the 'admin/login' method.");
+            throw new RoleNotMatchException("LOGIN_ERROR");
+        }
+
+        if (!passwordEncoder.matches(loginRequestDto.getPassword(), user.getPassword())){
+            log.error("Password is Wrong!");
+            throw new WrongPasswordException("Password is Wrong!");
+        }
+
+        refreshTokenRepository.deleteByUser(user);
+
+        String accessToken = jwtUtil.generateAccessToken(loginRequestDto.getEmail());
+        String refreshTokenStr = jwtUtil.generateRefreshToken();
+
+        var refreshToken = RefreshToken.builder()
+                .token(refreshTokenStr)
+                .user(user)
+                .expiryDate(LocalDateTime.now().plusDays(30))
+                .build();
+
+        refreshTokenRepository.save(refreshToken);
+
+        log.info("User login. \nUser ID: {}", user.getId());
+        return new AuthResponseDto(accessToken, refreshTokenStr);
     }
 }

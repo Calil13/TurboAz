@@ -92,4 +92,28 @@ public class GlobalExceptionHandler {
 
         return new ExceptionDto(body);
     }
+
+    @ExceptionHandler(RoleNotMatchException.class)
+    @ResponseStatus(HttpStatus.FORBIDDEN)
+    public ExceptionDto roleNotMatchException(RoleNotMatchException e) {
+        Map<String, Object> body = new LinkedHashMap<>();
+        body.put("timestamp", LocalDateTime.now());
+        body.put("status", HttpStatus.FORBIDDEN.value());
+        body.put("error", "Your role is not suitable.");
+        body.put("message", e.getMessage());
+
+        return new ExceptionDto(body);
+    }
+
+    @ExceptionHandler(WrongPasswordException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ExceptionDto handleWrongPassword(WrongPasswordException e) {
+        Map<String, Object> body = new LinkedHashMap<>();
+        body.put("timestamp", LocalDateTime.now());
+        body.put("status", HttpStatus.BAD_REQUEST.value());
+        body.put("error", "Wrong password");
+        body.put("message", e.getMessage());
+
+        return new ExceptionDto(body);
+    }
 }
