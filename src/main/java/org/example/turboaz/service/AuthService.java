@@ -14,6 +14,7 @@ import org.example.turboaz.repository.RefreshTokenRepository;
 import org.example.turboaz.repository.UsersRepository;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.RequestBody;
 
 import java.time.LocalDateTime;
 
@@ -95,5 +96,41 @@ public class AuthService {
 
         log.info("User login. \nUser ID: {}", user.getId());
         return new AuthResponseDto(accessToken, refreshTokenStr);
+    }
+
+    public AuthResponseDto refreshToken(RefreshTokenRequestDto requestDto) {
+        String oldToken = requestDto.getRefreshToken();
+
+        var token = refreshTokenRepository.findByToken(oldToken)
+                .orElseThrow(() -> {
+                    log.error("Refresh token not found!");
+                    return new NotFoundException("Refresh token not found!");
+                });
+
+        var user = token.getUser();
+
+        if (token.isRevoked() || token.getExpiryDate().isBefore(LocalDateTime.now())) {
+            log.info("Refresh token is invalid or expired. \nUser ID: {}", user.getId());
+            throw new BadRequestException("Refresh token is invalid or expired!");
+        }
+
+        String email = user.getEmail();
+
+        refreshTokenRepository.delete(token);
+
+        String newAccessToken = jwtUtil.generateAccessToken(email);
+        String newRefreshTokenStr = jwtUtil.generateRefreshToken();
+
+        RefreshToken refreshToken = RefreshToken.builder()
+                .token(newRefreshTokenStr)
+                .user(user)
+                .expiryDate(LocalDateTime.now().plusDays(30))
+                .revoked(false)
+                .build();
+
+        refreshTokenRepository.save(refreshToken);
+
+        log.info("Token created. \nUser ID: {}", user.getId());
+        return new AuthResponseDto(newAccessToken, newRefreshTokenStr);
     }
 }

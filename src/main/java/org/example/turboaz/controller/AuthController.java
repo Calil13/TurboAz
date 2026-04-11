@@ -32,8 +32,13 @@ public class AuthController {
         return authService.finishRegister(finishDto);
     }
 
-    @PostMapping
+    @PostMapping("/admin/login")
     public AuthResponseDto login(@Valid @RequestBody LoginRequestDto loginRequestDto) {
         return authService.login(loginRequestDto);
+    }
+
+    @PostMapping("refresh-token")
+    public AuthResponseDto refreshToken(@RequestBody RefreshTokenRequestDto requestDto) {
+        return authService.refreshToken(requestDto);
     }
 }
