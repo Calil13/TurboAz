@@ -18,8 +18,8 @@ public class AuthController {
     private final AuthService authService;
 
     @PostMapping("/register/start")
-    public String startRegistration(@Valid @RequestBody EmailSentOtp sentOtp) {
-        return authService.startRegistration(sentOtp);
+    public String sentOTP(@Valid @RequestBody EmailSentOtp sentOtp) {
+        return authService.sentOTP(sentOtp);
     }
 
     @PostMapping("/register/verify")
@@ -32,9 +32,9 @@ public class AuthController {
         return authService.finishRegister(finishDto);
     }
 
-    @PostMapping("/admin/login")
-    public AuthResponseDto login(@Valid @RequestBody LoginRequestDto loginRequestDto) {
-        return authService.login(loginRequestDto);
+    @PostMapping("/login")
+    public AuthResponseDto login(@Valid @RequestBody EmailSentOtp emailSentOtp) {
+        return authService.login(emailSentOtp);
     }
 
     @PostMapping("refresh-token")

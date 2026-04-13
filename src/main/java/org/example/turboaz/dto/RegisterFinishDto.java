@@ -15,7 +15,4 @@ public class RegisterFinishDto {
 
     @ValidPhone
     private String phone;
-
-    @ValidPassword
-    private String password;
 }

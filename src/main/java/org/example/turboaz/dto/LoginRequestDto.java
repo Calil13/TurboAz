@@ -14,7 +14,4 @@ import org.example.turboaz.validation.ValidPassword;
 public class LoginRequestDto {
     @ValidEmail
     private String email;
-
-    @ValidPassword
-    private String password;
 }

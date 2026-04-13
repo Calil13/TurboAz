@@ -31,7 +31,7 @@ public class AuthService {
     private final RefreshTokenRepository refreshTokenRepository;
     private final JwtUtil jwtUtil;
     
-    public String startRegistration(EmailSentOtp sentOtp) {
+    public String sentOTP(EmailSentOtp sentOtp) {
 
         if (usersRepository.findByEmail(sentOtp.getEmail()).isPresent()) {
             log.info("Used email added: {}", sentOtp.getEmail());
@@ -56,7 +56,6 @@ public class AuthService {
         }
 
         Users user = usersMapper.toEntity(finishDto);
-        user.setPassword(passwordEncoder.encode(finishDto.getPassword()));
         user.setUserRole(UsersRole.USER);
         user.setPhone("+994" + finishDto.getPhone());
 
@@ -67,8 +66,8 @@ public class AuthService {
         return "Customer successfully registered.";
     }
 
-    public AuthResponseDto login(LoginRequestDto loginRequestDto) {
-        var user = usersRepository.findByEmail(loginRequestDto.getEmail())
+    public AuthResponseDto login(EmailSentOtp emailSentOtp) {
+        var user = usersRepository.findByEmail(emailSentOtp.getEmail())
                 .orElseThrow(() -> new NotFoundException("User not found. Please register first."));
 
         if (user.getUserRole().equals(UsersRole.ADMIN)){
@@ -76,12 +75,10 @@ public class AuthService {
             throw new RoleNotMatchException("LOGIN_ERROR");
         }
 
-        if (!passwordEncoder.matches(loginRequestDto.getPassword(), user.getPassword())){
-            log.error("Password is Wrong!");
-            throw new WrongPasswordException("Password is Wrong!");
-        }
-
         refreshTokenRepository.deleteByUser(user);
+
+        log.info("OTP sent to user for login: {}", emailSentOtp.getEmail());
+        otpService.sendOtp(emailSentOtp.getEmail());
 
         String accessToken = jwtUtil.generateAccessToken(loginRequestDto.getEmail());
         String refreshTokenStr = jwtUtil.generateRefreshToken();
