@@ -12,9 +12,9 @@ import org.example.turboaz.mapper.UsersMapper;
 import org.example.turboaz.repository.OtpRepository;
 import org.example.turboaz.repository.RefreshTokenRepository;
 import org.example.turboaz.repository.UsersRepository;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.RequestBody;
 
 import java.time.LocalDateTime;
 
@@ -31,7 +31,7 @@ public class AuthService {
     private final RefreshTokenRepository refreshTokenRepository;
     private final JwtUtil jwtUtil;
     
-    public String sentOTP(EmailSentOtp sentOtp) {
+    public String startRegistration(EmailSentOtp sentOtp) {
 
         if (usersRepository.findByEmail(sentOtp.getEmail()).isPresent()) {
             log.info("Used email added: {}", sentOtp.getEmail());
@@ -56,6 +56,7 @@ public class AuthService {
         }
 
         Users user = usersMapper.toEntity(finishDto);
+        user.setPassword(passwordEncoder.encode(finishDto.getPassword()));
         user.setUserRole(UsersRole.USER);
         user.setPhone("+994" + finishDto.getPhone());
 
@@ -66,8 +67,8 @@ public class AuthService {
         return "Customer successfully registered.";
     }
 
-    public AuthResponseDto login(EmailSentOtp emailSentOtp) {
-        var user = usersRepository.findByEmail(emailSentOtp.getEmail())
+    public AuthResponseDto login(LoginRequestDto loginRequestDto) {
+        var user = usersRepository.findByEmail(loginRequestDto.getEmail())
                 .orElseThrow(() -> new NotFoundException("User not found. Please register first."));
 
         if (user.getUserRole().equals(UsersRole.ADMIN)){
@@ -75,10 +76,12 @@ public class AuthService {
             throw new RoleNotMatchException("LOGIN_ERROR");
         }
 
-        refreshTokenRepository.deleteByUser(user);
+        if (!passwordEncoder.matches(loginRequestDto.getPassword(), user.getPassword())){
+            log.error("Password is Wrong!");
+            throw new WrongPasswordException("Password is Wrong!");
+        }
 
-        log.info("OTP sent to user for login: {}", emailSentOtp.getEmail());
-        otpService.sendOtp(emailSentOtp.getEmail());
+        refreshTokenRepository.deleteByUser(user);
 
         String accessToken = jwtUtil.generateAccessToken(loginRequestDto.getEmail());
         String refreshTokenStr = jwtUtil.generateRefreshToken();
@@ -93,6 +96,33 @@ public class AuthService {
 
         log.info("User login. \nUser ID: {}", user.getId());
         return new AuthResponseDto(accessToken, refreshTokenStr);
+    }
+
+    public String logout() {
+        String currentEmail = SecurityContextHolder.getContext()
+                .getAuthentication()
+                .getName();
+
+        var user = usersRepository.findByEmail(currentEmail)
+                .orElseThrow(() -> new NotFoundException("USER_NOT_FOUND"));
+
+        user.setIsActive(false);
+        usersRepository.save(user);
+
+        return "User logout. \nUserID: " + user.getId();
+    }
+
+    public String delete(LogoutRequestDto logoutRequestDto) {
+        var user = usersRepository.findByEmail(logoutRequestDto.getEmail())
+                .orElseThrow(() -> new NotFoundException("USER_NOT_FOUND"));
+
+        passwordEncoder.encode(logoutRequestDto.getPassword());
+
+        if (passwordEncoder.encode(logoutRequestDto.getPassword()).equals(user.getPassword())) {
+            usersRepository.delete(user);
+        }
+
+        return "User deleted. \nUserID: " + user.getId();
     }
 
     public AuthResponseDto refreshToken(RefreshTokenRequestDto requestDto) {

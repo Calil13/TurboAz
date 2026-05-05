@@ -28,11 +28,17 @@ public class Users {
     private String email;
 
     @Column(nullable = false)
+    private String password;
+
+    @Column(nullable = false)
     private String phone;
 
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
     private UsersRole userRole;
+
+    @Column(nullable = false)
+    private Boolean isActive;
 
     @CreationTimestamp
     private LocalDateTime createdAt;

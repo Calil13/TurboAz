@@ -1,14 +1,11 @@
 package org.example.turboaz.controller;
 
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.example.turboaz.dto.*;
 import org.example.turboaz.service.AuthService;
-import org.hibernate.validator.constraints.Email;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
@@ -18,8 +15,8 @@ public class AuthController {
     private final AuthService authService;
 
     @PostMapping("/register/start")
-    public String sentOTP(@Valid @RequestBody EmailSentOtp sentOtp) {
-        return authService.sentOTP(sentOtp);
+    public String startRegistration(@Valid @RequestBody EmailSentOtp sentOtp) {
+        return authService.startRegistration(sentOtp);
     }
 
     @PostMapping("/register/verify")
@@ -33,8 +30,20 @@ public class AuthController {
     }
 
     @PostMapping("/login")
-    public AuthResponseDto login(@Valid @RequestBody EmailSentOtp emailSentOtp) {
-        return authService.login(emailSentOtp);
+    public AuthResponseDto login(@Valid @RequestBody LoginRequestDto loginRequestDto) {
+        return authService.login(loginRequestDto);
+    }
+
+    @PatchMapping("/logout")
+    @SecurityRequirement(name = "bearerAuth")
+    public String logout() {
+        return authService.logout();
+    }
+
+    @PostMapping("/delete")
+    @SecurityRequirement(name = "bearerAuth")
+    public String delete(@RequestBody LogoutRequestDto logoutRequestDto) {
+        return authService.delete(logoutRequestDto);
     }
 
     @PostMapping("refresh-token")

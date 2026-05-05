@@ -1,20 +1,19 @@
 package org.example.turboaz.dto;
 
-
-import lombok.Data;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.example.turboaz.validation.ValidEmail;
 import org.example.turboaz.validation.ValidPassword;
-import org.example.turboaz.validation.ValidPhone;
 
-@Data
-public class RegisterFinishDto {
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+public class LogoutRequestDto {
     @ValidEmail
     private String email;
-
-    private String name;
-
-    @ValidPhone
-    private String phone;
 
     @ValidPassword
     private String password;
