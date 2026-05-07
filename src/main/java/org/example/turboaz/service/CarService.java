@@ -13,6 +13,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.PathVariable;
 
 import java.time.LocalDateTime;
 
@@ -28,6 +29,16 @@ public class CarService {
     public Page<CarResponseDto> getCars(Pageable pageable) {
         Page<Car> cars = carRepository.findAll(pageable);
         return cars.map(carMapper::toDto);
+    }
+
+    public CarResponseDto getCar(Long id) {
+        var car = carRepository.findById(id)
+                .orElseThrow(() -> {
+                    log.error("Car not found. \nCarID: {}", id);
+                    return new NotFoundException("CAR_NOT_FOUND");
+                });
+
+        return carMapper.toDto(car);
     }
 
     public void addCar(CarCreateRequest carCreateRequest) {

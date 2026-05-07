@@ -23,9 +23,16 @@ public class CarController {
         return carService.getCars(pageable);
     }
 
+    @GetMapping("{id}")
+    public CarResponseDto getCar(@PathVariable Long id) {
+        return carService.getCar(id);
+    }
+
     @PostMapping("/new-car")
     @SecurityRequirement(name = "bearerAuth")
     public void addCar(@Valid @RequestBody CarCreateRequest carCreateRequest) {
         carService.addCar(carCreateRequest);
     }
+
+
 }
