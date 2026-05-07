@@ -5,10 +5,8 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.example.turboaz.dto.CarCreateRequest;
 import org.example.turboaz.service.CarService;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.data.domain.Page;
+import org.springframework.web.bind.annotation.*;
 
 @RequestMapping("/car")
 @RestController
@@ -16,6 +14,9 @@ import org.springframework.web.bind.annotation.RestController;
 public class CarController {
 
     private final CarService carService;
+
+    @GetMapping
+    public Page<>
 
     @PostMapping("/new-car")
     @SecurityRequirement(name = "bearerAuth")

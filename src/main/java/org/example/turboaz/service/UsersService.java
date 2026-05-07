@@ -2,7 +2,8 @@ package org.example.turboaz.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.example.turboaz.dto.UserResponseDto;
+import org.example.turboaz.dto.UserResponseDtoPrivate;
+import org.example.turboaz.dto.UserResponseDtoPublic;
 import org.example.turboaz.dto.UsersUpdateNameDto;
 import org.example.turboaz.dto.UsersUpdatePhoneDto;
 import org.example.turboaz.exception.NotFoundException;
@@ -19,7 +20,22 @@ public class UsersService {
     private final UsersRepository usersRepository;
     private final UsersMapper usersMapper;
 
-    public UserResponseDto getUserInfo() {
+    public UserResponseDtoPublic getUserInfoPublic() {
+        String currentEmail = SecurityContextHolder.getContext()
+                .getAuthentication()
+                .getName();
+
+        var user = usersRepository.findByEmail(currentEmail)
+                .orElseThrow(() -> {
+                    log.error("User not found for email: {}", currentEmail);
+                    return new NotFoundException("USER_NOT_FOUND");
+                });
+
+        log.info("User info(Public) retrieved successfully for email: {}", currentEmail);
+        return usersMapper.toDtoPublic(user);
+    }
+
+    public UserResponseDtoPrivate getUserInfoPrivate() {
         String currentEmail = SecurityContextHolder.getContext()
                 .getAuthentication()
                 .getName();
@@ -31,7 +47,7 @@ public class UsersService {
                 });
 
         log.info("User info retrieved successfully for email: {}", currentEmail);
-        return usersMapper.toDto(user);
+        return usersMapper.toDtoPrivate(user);
     }
 
     public String updateName(UsersUpdateNameDto updateNameDto) {

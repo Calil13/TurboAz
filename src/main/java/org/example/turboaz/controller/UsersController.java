@@ -2,7 +2,8 @@ package org.example.turboaz.controller;
 
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import lombok.RequiredArgsConstructor;
-import org.example.turboaz.dto.UserResponseDto;
+import org.example.turboaz.dto.UserResponseDtoPrivate;
+import org.example.turboaz.dto.UserResponseDtoPublic;
 import org.example.turboaz.dto.UsersUpdateNameDto;
 import org.example.turboaz.dto.UsersUpdatePhoneDto;
 import org.example.turboaz.service.UsersService;
@@ -15,9 +16,15 @@ public class UsersController {
 
     private final UsersService usersService;
 
-    @GetMapping
-    public UserResponseDto getUserInfo() {
-        return usersService.getUserInfo();
+    @GetMapping("user-info/public")
+    public UserResponseDtoPublic getUserInfoPublic() {
+        return usersService.getUserInfoPublic();
+    }
+
+    @GetMapping("/user-info/private")
+    @SecurityRequirement(name = "bearerAuth")
+    public UserResponseDtoPrivate getUserInfoPrivate() {
+        return usersService.getUserInfoPrivate();
     }
 
     @PatchMapping("/update-name")

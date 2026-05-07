@@ -35,12 +35,14 @@ public class SecurityConfig {
                                 "/auth/register/**",
                                 "/auth/refresh-token",
                                 "/auth/password/**",
+                                "/users/user-info/public",
                                 "/swagger-ui/**",
                                 "/v3/api-docs/**")
                         .permitAll()
 
                         .requestMatchers(HttpMethod.POST, "/auth/logout").hasAnyAuthority("ROLE_USER","ROLE_ADMIN")
-                        .requestMatchers(HttpMethod.GET, "/users/**").hasAnyAuthority("ROLE_USER", "ROLE_ADMIN")
+                        .requestMatchers(HttpMethod.POST, "/auth/delete").hasAnyAuthority("ROLE_USER","ROLE_ADMIN")
+                        .requestMatchers(HttpMethod.GET, "/users/user-info/private").hasAnyAuthority("ROLE_USER", "ROLE_ADMIN")
                         .anyRequest().authenticated()
                 )
                 .exceptionHandling(exceptionHandling -> exceptionHandling
