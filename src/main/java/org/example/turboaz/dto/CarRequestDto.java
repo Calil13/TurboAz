@@ -6,7 +6,7 @@ import org.example.turboaz.enums.*;
 import java.math.BigDecimal;
 
 @Data
-public class CarCreateRequest {
+public class CarRequestDto {
 
     @NotBlank(message = "Brand cannot be blank")
     private String brand;
