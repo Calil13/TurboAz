@@ -78,4 +78,7 @@ public class Car {
     @UpdateTimestamp
     @Column(nullable = false)
     private LocalDateTime updatedAt;
+
+    @Column(nullable = false)
+    private LocalDateTime expirationDate;
 }

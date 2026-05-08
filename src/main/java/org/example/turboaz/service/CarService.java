@@ -56,6 +56,7 @@ public class CarService {
         car.setUsers(user);
         car.setCreatedAt(LocalDateTime.now());
         car.setViewCount(0L);
+        car.setExpirationDate(LocalDateTime.now().plusDays(30));
 
         carRepository.save(car);
     }
