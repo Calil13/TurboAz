@@ -14,6 +14,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 
 import java.time.LocalDateTime;
@@ -75,5 +76,22 @@ public class CarService {
 
         carMapper.updateEntityFromDto(carRequestDto, car);
         carRepository.save(car);
+    }
+
+    public void deleteCar(Long id) {
+        String currentEmail = SecurityContextHolder.getContext()
+                .getAuthentication()
+                .getName();
+
+        usersRepository.findByEmail(currentEmail)
+                .orElseThrow(() -> new NotFoundException("USER_NOT_FOND"));
+
+        var car = carRepository.findById(id)
+                .orElseThrow(() -> {
+                    log.error("Car not found. \nCarID: {}", id);
+                    return new NotFoundException("CAR_NOT_FOUND_OR_ACCESS_DENIED");
+                });
+
+        carRepository.delete(car);
     }
 }

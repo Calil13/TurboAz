@@ -34,9 +34,15 @@ public class CarController {
         carService.addCar(carRequestDto);
     }
 
-    @PatchMapping("edit-car")
+    @PatchMapping("/edit-car")
     @SecurityRequirement(name = "bearerAuth")
     public void editCar(@Valid @RequestBody CarRequestDto carRequestDto, Long carId) {
         carService.editCar(carRequestDto, carId);
+    }
+
+    @DeleteMapping("/delete-car/{id}")
+    @SecurityRequirement(name = "bearerAuth")
+    public void deleteCar(@PathVariable Long id) {
+        carService.deleteCar(id);
     }
 }
