@@ -44,6 +44,8 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.POST, "/auth/delete").hasAnyAuthority("ROLE_USER","ROLE_ADMIN")
                         .requestMatchers(HttpMethod.GET, "/users/user-info/private").hasAnyAuthority("ROLE_USER", "ROLE_ADMIN")
                         .requestMatchers(HttpMethod.POST, "/car/new-car").hasAnyAuthority("ROLE_USER")
+                        .requestMatchers(HttpMethod.PATCH, "/car/edit-car").hasAnyAuthority("ROLE_USER")
+                        .requestMatchers(HttpMethod.DELETE, "/car/delete-car/").hasAnyAuthority("ROLE_USER", "ROLE_ADMIN")
                         .requestMatchers(HttpMethod.GET, "/car/**").permitAll()
                         .anyRequest().authenticated()
                 )

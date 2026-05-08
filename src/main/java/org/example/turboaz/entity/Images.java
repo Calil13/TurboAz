@@ -21,4 +21,9 @@ public class Images {
     @ManyToOne(optional = false)
     @JoinColumn(name = "car_id")
     private Car car;
+
+    public Images(String imageUrl, Car car) {
+        this.imageUrl = imageUrl;
+        this.car = car;
+    }
 }
