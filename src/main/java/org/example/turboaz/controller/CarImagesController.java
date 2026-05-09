@@ -22,14 +22,14 @@ public class CarImagesController {
         return carImagesService.getCarImages(carId);
     }
 
+    @PostMapping(value = "/{carId}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @SecurityRequirement(name = "bearerAuth")
-    @PostMapping(value = "{carId}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public List<CarImageDto> uploadImage(@PathVariable Long carId, @RequestPart("files") List<MultipartFile> files) {
         return carImagesService.uploadImage(carId, files);
     }
 
-    @SecurityRequirement(name = "bearerAuth")
     @DeleteMapping("/{id}")
+    @SecurityRequirement(name = "bearerAuth")
     public String deleteImage(@PathVariable Long id) {
         return carImagesService.deleteImage(id);
     }

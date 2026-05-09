@@ -1,11 +1,9 @@
 package org.example.turboaz.controller;
 
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.example.turboaz.dto.UserResponseDtoPrivate;
-import org.example.turboaz.dto.UserResponseDtoPublic;
-import org.example.turboaz.dto.UsersUpdateNameDto;
-import org.example.turboaz.dto.UsersUpdatePhoneDto;
+import org.example.turboaz.dto.*;
 import org.example.turboaz.service.UsersService;
 import org.springframework.web.bind.annotation.*;
 
@@ -16,7 +14,7 @@ public class UsersController {
 
     private final UsersService usersService;
 
-    @GetMapping("user-info/public")
+    @GetMapping("/user-info/public")
     public UserResponseDtoPublic getUserInfoPublic() {
         return usersService.getUserInfoPublic();
     }
@@ -27,15 +25,21 @@ public class UsersController {
         return usersService.getUserInfoPrivate();
     }
 
-    @PatchMapping("/update-name")
+    @PatchMapping("/update/name")
     @SecurityRequirement(name = "bearerAuth")
     public String updateName(@RequestBody UsersUpdateNameDto updateNameDto) {
          return usersService.updateName(updateNameDto);
     }
 
-    @PatchMapping("/update-phone")
+    @PatchMapping("/update/phone")
     @SecurityRequirement(name = "bearerAuth")
     public String updatePhone(@RequestBody UsersUpdatePhoneDto updatePhoneDto) {
         return usersService.updatePhone(updatePhoneDto);
+    }
+
+    @PatchMapping("/update/password")
+    @SecurityRequirement(name = "bearerAuth")
+    public String updatePassword(@Valid @RequestBody UsersUpdatePasswordRequestDto updatePassword) {
+        return usersService.updatePassword(updatePassword);
     }
 }

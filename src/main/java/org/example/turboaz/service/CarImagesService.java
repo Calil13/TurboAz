@@ -1,6 +1,5 @@
 package org.example.turboaz.service;
 
-import io.swagger.v3.oas.annotations.servers.Server;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.example.turboaz.dto.CarImageDto;
@@ -33,11 +32,11 @@ public class CarImagesService {
     private final CarRepository carRepository;
     private final CarImagesRepository carImagesRepository;
 
-    public List<CarImageDto> getCarImages(Long productId) {
-        List<Images> carImage = carImagesRepository.findByCarId(productId);
+    public List<CarImageDto> getCarImages(Long carId) {
+        List<Images> carImage = carImagesRepository.findByCarId(carId);
 
         if (carImage.isEmpty()) {
-            log.warn("Images not found for product with ID {}", productId);
+            log.warn("Images not found for car with ID {}", carId);
         }
 
         return carImage.stream()

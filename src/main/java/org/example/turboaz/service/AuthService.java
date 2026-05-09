@@ -67,6 +67,30 @@ public class AuthService {
         return "Customer successfully registered.";
     }
 
+    public String resetPassword(UsersForgetPasswordDto forgetPassword) {
+
+        var user = usersRepository.findByEmail(forgetPassword.getEmail())
+                .orElseThrow(() -> new NotFoundException("USER_NOT_FOUND"));
+
+        if (!forgetPassword.getNewPassword().equals(forgetPassword.getConfirmNewPassword())) {
+            log.warn("New password and confirm password do not match!");
+            throw new WrongPasswordException("newPassword and confirmNewPassword must be the same!");
+        }
+
+        if (passwordEncoder.matches(forgetPassword.getNewPassword(), user.getPassword())) {
+            log.warn("New password cannot be same as the old password!");
+            throw new WrongPasswordException("New password cannot be same as the old password!");
+        }
+
+        user.setPassword(passwordEncoder.encode(forgetPassword.getNewPassword()));
+        usersRepository.save(user);
+
+        otpService.removeOtp(user.getEmail());
+
+        log.info("Password updated successfully. \nUser ID: {}", user.getId());
+        return "Password updated successfully.";
+    }
+
     public AuthResponseDto login(LoginRequestDto loginRequestDto) {
         var user = usersRepository.findByEmail(loginRequestDto.getEmail())
                 .orElseThrow(() -> new NotFoundException("User not found. Please register first."));

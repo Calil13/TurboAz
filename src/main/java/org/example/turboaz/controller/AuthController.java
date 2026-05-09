@@ -29,6 +29,11 @@ public class AuthController {
         return authService.finishRegister(finishDto);
     }
 
+    @PostMapping("/password/reset")
+    public String resetPassword(@Valid @RequestBody UsersForgetPasswordDto forgetPassword) {
+        return authService.resetPassword(forgetPassword);
+    }
+
     @PostMapping("/login")
     public AuthResponseDto login(@Valid @RequestBody LoginRequestDto loginRequestDto) {
         return authService.login(loginRequestDto);

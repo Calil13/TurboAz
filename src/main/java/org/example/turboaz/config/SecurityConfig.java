@@ -30,23 +30,26 @@ public class SecurityConfig {
                 .sessionManagement(sess -> sess.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(
-                                "/auth/login",
-                                "/auth/admin/login",
                                 "/auth/register/**",
                                 "/auth/refresh-token",
+                                "/auth/login",
                                 "/auth/password/**",
                                 "/users/user-info/public",
                                 "/swagger-ui/**",
                                 "/v3/api-docs/**")
                         .permitAll()
+                        .requestMatchers(HttpMethod.GET, "/car/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/carImages/**").permitAll()
 
                         .requestMatchers(HttpMethod.POST, "/auth/logout").hasAnyAuthority("ROLE_USER","ROLE_ADMIN")
                         .requestMatchers(HttpMethod.POST, "/auth/delete").hasAnyAuthority("ROLE_USER","ROLE_ADMIN")
                         .requestMatchers(HttpMethod.GET, "/users/user-info/private").hasAnyAuthority("ROLE_USER", "ROLE_ADMIN")
+                        .requestMatchers(HttpMethod.PATCH, "/users/update/**").hasAnyAuthority("ROLE_USER", "ROLE_ADMIN")
                         .requestMatchers(HttpMethod.POST, "/car/new-car").hasAnyAuthority("ROLE_USER")
                         .requestMatchers(HttpMethod.PATCH, "/car/edit-car").hasAnyAuthority("ROLE_USER")
-                        .requestMatchers(HttpMethod.DELETE, "/car/delete-car/").hasAnyAuthority("ROLE_USER", "ROLE_ADMIN")
-                        .requestMatchers(HttpMethod.GET, "/car/**").permitAll()
+                        .requestMatchers(HttpMethod.DELETE, "/car/delete-car").hasAnyAuthority("ROLE_USER", "ROLE_ADMIN")
+                        .requestMatchers(HttpMethod.POST, "/carImages/").hasAnyAuthority("ROLE_USER", "ROLE_ADMIN")
+                        .requestMatchers(HttpMethod.DELETE, "/carImages/").hasAnyAuthority("ROLE_USER", "ROLE_ADMIN")
                         .anyRequest().authenticated()
                 )
                 .exceptionHandling(exceptionHandling -> exceptionHandling
