@@ -51,18 +51,23 @@ public class Car {
     @Column(nullable = false)
     private Integer year;
 
+    @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private Color color;
 
+    @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private FuelType fuelType;
 
-    @Column(name = "driver_type", nullable = false, length = 50)
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
     private DriveType driveType;
 
+    @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private Transmission transmission;
 
+    @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private EngineCapacity engineCapacity;
 

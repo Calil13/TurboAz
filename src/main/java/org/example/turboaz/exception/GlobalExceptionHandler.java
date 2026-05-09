@@ -10,7 +10,6 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import java.io.IOException;
-import java.rmi.UnexpectedException;
 import java.time.LocalDateTime;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -118,14 +117,17 @@ public class GlobalExceptionHandler {
         return new ExceptionDto(body);
     }
 
-    @ExceptionHandler(org.example.turboaz.exception.UnexpectedException.class)
+    @ExceptionHandler(Exception.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-    public ExceptionDto unexpectedException(UnexpectedException e) {
+    public ExceptionDto unexpectedException(Exception e) {
+        log.error("Unexpected exception occurred", e);
+
         Map<String, Object> body = new LinkedHashMap<>();
         body.put("timestamp", LocalDateTime.now());
-        body.put("status", HttpStatus.NOT_FOUND.value());
-        body.put("error", "Unexpected Exception");
-        body.put("message", e.getMessage());
+        body.put("status", HttpStatus.INTERNAL_SERVER_ERROR.value());
+        body.put("error", "Internal Server Error");
+
+        body.put("message", "Unexpected error occurred. Please try again later.");
 
         return new ExceptionDto(body);
     }

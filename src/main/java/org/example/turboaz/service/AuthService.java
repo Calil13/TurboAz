@@ -44,7 +44,6 @@ public class AuthService {
 
     public String verifyOtp(EmailVerifyOtpDto verifyOtp) {
         otpService.verifyOtp(verifyOtp.getEmail(), verifyOtp.getOtp());
-        log.info("OTP verified.");
         return "OTP verified.";
     }
 
@@ -58,6 +57,7 @@ public class AuthService {
         Users user = usersMapper.toEntity(finishDto);
         user.setPassword(passwordEncoder.encode(finishDto.getPassword()));
         user.setUserRole(UsersRole.USER);
+        user.setIsActive(false);
         user.setPhone("+994" + finishDto.getPhone());
 
         usersRepository.save(user);
@@ -118,6 +118,8 @@ public class AuthService {
 
         refreshTokenRepository.save(refreshToken);
 
+        user.setIsActive(true);
+        usersRepository.save(user);
         log.info("User login. \nUser ID: {}", user.getId());
         return new AuthResponseDto(accessToken, refreshTokenStr);
     }

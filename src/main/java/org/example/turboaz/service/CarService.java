@@ -40,6 +40,11 @@ public class CarService {
                     return new NotFoundException("CAR_NOT_FOUND");
                 });
 
+        Long viewCount = car.getViewCount();
+        viewCount++;
+        car.setViewCount(viewCount);
+
+        carRepository.save(car);
         return carMapper.toDto(car);
     }
 
@@ -59,6 +64,7 @@ public class CarService {
         car.setExpirationDate(LocalDateTime.now().plusDays(30));
 
         carRepository.save(car);
+        log.info("New car added. \nUserID: {}", user.getId());
     }
 
     public void editCar(CarRequestDto carRequestDto, Long carId) {

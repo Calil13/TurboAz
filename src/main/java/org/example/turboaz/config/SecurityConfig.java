@@ -30,14 +30,15 @@ public class SecurityConfig {
                 .sessionManagement(sess -> sess.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(
+                                "/auth/login",
                                 "/auth/register/**",
                                 "/auth/refresh-token",
-                                "/auth/login",
                                 "/auth/password/**",
                                 "/users/user-info/public",
                                 "/swagger-ui/**",
                                 "/v3/api-docs/**")
                         .permitAll()
+
                         .requestMatchers(HttpMethod.GET, "/car/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/carImages/**").permitAll()
 
