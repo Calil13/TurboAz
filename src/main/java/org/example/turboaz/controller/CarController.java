@@ -5,6 +5,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.example.turboaz.dto.CarRequestDto;
 import org.example.turboaz.dto.CarResponseDto;
+import org.example.turboaz.dto.CarUpdateDto;
 import org.example.turboaz.service.CarService;
 import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.data.domain.Page;
@@ -36,8 +37,8 @@ public class CarController {
 
     @PatchMapping("/edit-car")
     @SecurityRequirement(name = "bearerAuth")
-    public void editCar(@Valid @RequestBody CarRequestDto carRequestDto, Long carId) {
-        carService.editCar(carRequestDto, carId);
+    public void editCar(@Valid @RequestBody CarUpdateDto carUpdateDto, Long carId) {
+        carService.editCar(carUpdateDto, carId);
     }
 
     @DeleteMapping("/delete-car/{id}")

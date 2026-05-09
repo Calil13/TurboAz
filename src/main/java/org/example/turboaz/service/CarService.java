@@ -5,6 +5,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.example.turboaz.dto.CarRequestDto;
 import org.example.turboaz.dto.CarResponseDto;
+import org.example.turboaz.dto.CarUpdateDto;
 import org.example.turboaz.entity.Car;
 import org.example.turboaz.exception.NotFoundException;
 import org.example.turboaz.mapper.CarMapper;
@@ -67,7 +68,7 @@ public class CarService {
         log.info("New car added. \nUserID: {}", user.getId());
     }
 
-    public void editCar(CarRequestDto carRequestDto, Long carId) {
+    public void editCar(CarUpdateDto carUpdateDto, Long carId) {
         String currentEmail = SecurityContextHolder.getContext()
                 .getAuthentication()
                 .getName();
@@ -81,8 +82,9 @@ public class CarService {
                     return new NotFoundException("CAR_NOT_FOUND_OR_ACCESS_DENIED");
                 });
 
-        carMapper.updateEntityFromDto(carRequestDto, car);
+        carMapper.updateEntityFromDto(carUpdateDto, car);
         carRepository.save(car);
+        log.info("Car edited. \nCarID: {}", car.getId());
     }
 
     public void deleteCar(Long id) {

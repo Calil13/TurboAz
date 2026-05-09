@@ -20,18 +20,14 @@ public class UsersService {
     private final UsersMapper usersMapper;
     private final PasswordEncoder passwordEncoder;
 
-    public UserResponseDtoPublic getUserInfoPublic() {
-        String currentEmail = SecurityContextHolder.getContext()
-                .getAuthentication()
-                .getName();
-
-        var user = usersRepository.findByEmail(currentEmail)
+    public UserResponseDtoPublic getUserInfoPublic(Long id) {
+        var user = usersRepository.findById(id)
                 .orElseThrow(() -> {
-                    log.error("User not found for email: {}", currentEmail);
+                    log.error("User not found for id: {}", id);
                     return new NotFoundException("USER_NOT_FOUND");
                 });
 
-        log.info("User info(Public) retrieved successfully for email: {}", currentEmail);
+        log.info("User info(Public) retrieved successfully for id: {}", id);
         return usersMapper.toDtoPublic(user);
     }
 

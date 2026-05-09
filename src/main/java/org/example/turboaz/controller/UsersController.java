@@ -14,9 +14,9 @@ public class UsersController {
 
     private final UsersService usersService;
 
-    @GetMapping("/user-info/public")
-    public UserResponseDtoPublic getUserInfoPublic() {
-        return usersService.getUserInfoPublic();
+    @GetMapping("/user-info/public/{id}")
+    public UserResponseDtoPublic getUserInfoPublic(@PathVariable Long id) {
+        return usersService.getUserInfoPublic(id);
     }
 
     @GetMapping("/user-info/private")
