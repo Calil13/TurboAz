@@ -1,11 +1,10 @@
 package org.example.turboaz.service;
 
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.example.turboaz.dto.CarRequestDto;
-import org.example.turboaz.dto.CarResponseDto;
-import org.example.turboaz.dto.CarUpdateDto;
+import org.example.turboaz.dto.car.CarRequestDto;
+import org.example.turboaz.dto.car.CarResponseDto;
+import org.example.turboaz.dto.car.CarUpdateDto;
 import org.example.turboaz.entity.Car;
 import org.example.turboaz.exception.NotFoundException;
 import org.example.turboaz.mapper.CarMapper;
@@ -15,8 +14,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
 
 import java.time.LocalDateTime;
 

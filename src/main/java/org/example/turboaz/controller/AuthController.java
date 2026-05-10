@@ -3,7 +3,10 @@ package org.example.turboaz.controller;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.example.turboaz.dto.*;
+import org.example.turboaz.dto.auth.*;
+import org.example.turboaz.dto.email.EmailSentOtp;
+import org.example.turboaz.dto.email.EmailVerifyOtpDto;
+import org.example.turboaz.dto.user.UsersForgetPasswordDto;
 import org.example.turboaz.service.AuthService;
 import org.springframework.web.bind.annotation.*;
 

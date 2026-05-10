@@ -1,22 +1,13 @@
-package org.example.turboaz.dto;
+package org.example.turboaz.dto.car;
 
-import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NoArgsConstructor;
-import org.example.turboaz.entity.Users;
 import org.example.turboaz.enums.*;
-import org.hibernate.annotations.CreationTimestamp;
 
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
 
 @Data
-@AllArgsConstructor
-@NoArgsConstructor
-public class CarResponseDto {
+public class CarUpdateDto {
 
-    private Long viewCount = 0L;
     private String brand;
     private String model;
     private String city;
@@ -31,6 +22,4 @@ public class CarResponseDto {
     private EngineCapacity engineCapacity;
     private Integer power;
     private Double mileage;
-    private LocalDateTime createdAt;
-    private LocalDateTime updatedAt;
 }

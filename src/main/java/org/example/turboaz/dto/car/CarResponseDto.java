@@ -1,13 +1,19 @@
-package org.example.turboaz.dto;
+package org.example.turboaz.dto.car;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.example.turboaz.enums.*;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 
 @Data
-public class CarUpdateDto {
+@AllArgsConstructor
+@NoArgsConstructor
+public class CarResponseDto {
 
+    private Long viewCount = 0L;
     private String brand;
     private String model;
     private String city;
@@ -22,4 +28,6 @@ public class CarUpdateDto {
     private EngineCapacity engineCapacity;
     private Integer power;
     private Double mileage;
+    private LocalDateTime createdAt;
+    private LocalDateTime updatedAt;
 }

@@ -2,7 +2,7 @@ package org.example.turboaz.controller;
 
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import lombok.RequiredArgsConstructor;
-import org.example.turboaz.dto.CarImageDto;
+import org.example.turboaz.dto.car.CarImageDto;
 import org.example.turboaz.service.CarImagesService;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;

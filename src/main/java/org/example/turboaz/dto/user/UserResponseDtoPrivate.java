@@ -1,11 +1,8 @@
-package org.example.turboaz.dto;
+package org.example.turboaz.dto.user;
 
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
-import java.time.LocalDateTime;
 
 @Data
 @AllArgsConstructor

@@ -2,7 +2,7 @@ package org.example.turboaz.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.example.turboaz.dto.*;
+import org.example.turboaz.dto.user.*;
 import org.example.turboaz.exception.NotFoundException;
 import org.example.turboaz.exception.WrongPasswordException;
 import org.example.turboaz.mapper.UsersMapper;

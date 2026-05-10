@@ -1,8 +1,8 @@
 package org.example.turboaz.mapper;
 
-import org.example.turboaz.dto.CarRequestDto;
-import org.example.turboaz.dto.CarResponseDto;
-import org.example.turboaz.dto.CarUpdateDto;
+import org.example.turboaz.dto.car.CarRequestDto;
+import org.example.turboaz.dto.car.CarResponseDto;
+import org.example.turboaz.dto.car.CarUpdateDto;
 import org.example.turboaz.entity.Car;
 import org.mapstruct.BeanMapping;
 import org.mapstruct.Mapper;

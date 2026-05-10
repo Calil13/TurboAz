@@ -1,4 +1,4 @@
-package org.example.turboaz.dto;
+package org.example.turboaz.dto.email;
 
 import lombok.Data;
 import org.example.turboaz.validation.ValidEmail;

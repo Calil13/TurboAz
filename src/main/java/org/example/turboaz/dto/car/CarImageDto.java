@@ -1,4 +1,4 @@
-package org.example.turboaz.dto;
+package org.example.turboaz.dto.car;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

@@ -2,7 +2,7 @@ package org.example.turboaz.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.example.turboaz.dto.CarImageDto;
+import org.example.turboaz.dto.car.CarImageDto;
 import org.example.turboaz.entity.Images;
 import org.example.turboaz.exception.NotFoundException;
 import org.example.turboaz.exception.UnexpectedException;

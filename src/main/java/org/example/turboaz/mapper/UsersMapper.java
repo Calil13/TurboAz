@@ -1,9 +1,8 @@
 package org.example.turboaz.mapper;
 
-import org.apache.catalina.User;
-import org.example.turboaz.dto.RegisterFinishDto;
-import org.example.turboaz.dto.UserResponseDtoPrivate;
-import org.example.turboaz.dto.UserResponseDtoPublic;
+import org.example.turboaz.dto.auth.RegisterFinishDto;
+import org.example.turboaz.dto.user.UserResponseDtoPrivate;
+import org.example.turboaz.dto.user.UserResponseDtoPublic;
 import org.example.turboaz.entity.Users;
 import org.mapstruct.Mapper;
 

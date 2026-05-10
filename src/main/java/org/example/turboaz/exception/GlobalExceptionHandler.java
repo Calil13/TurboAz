@@ -3,7 +3,7 @@ package org.example.turboaz.exception;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
-import org.example.turboaz.dto.ExceptionDto;
+import org.example.turboaz.dto.exception.ExceptionDto;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;

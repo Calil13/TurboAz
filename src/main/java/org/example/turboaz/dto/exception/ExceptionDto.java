@@ -1,4 +1,4 @@
-package org.example.turboaz.dto;
+package org.example.turboaz.dto.exception;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

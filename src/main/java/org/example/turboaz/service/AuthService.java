@@ -2,7 +2,10 @@ package org.example.turboaz.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.example.turboaz.dto.*;
+import org.example.turboaz.dto.auth.*;
+import org.example.turboaz.dto.email.EmailSentOtp;
+import org.example.turboaz.dto.email.EmailVerifyOtpDto;
+import org.example.turboaz.dto.user.UsersForgetPasswordDto;
 import org.example.turboaz.entity.RefreshToken;
 import org.example.turboaz.entity.Users;
 import org.example.turboaz.enums.UsersRole;
