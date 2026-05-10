@@ -34,6 +34,7 @@ public class SecurityConfig {
                                 "/auth/register/**",
                                 "/auth/refresh-token",
                                 "/auth/password/**",
+                                "/chat.html",
                                 "/ws/**",
                                 "/swagger-ui/**",
                                 "/v3/api-docs/**")

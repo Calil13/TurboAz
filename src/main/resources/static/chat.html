@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Chat Test</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.6.1/sockjs.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script>
+    <style>
+        body { font-family: Arial; max-width: 600px; margin: 40px auto; padding: 0 20px; }
+        #messages { border: 1px solid #ccc; height: 300px; overflow-y: auto; padding: 10px; margin-bottom: 10px; }
+        .message { margin: 8px 0; padding: 8px 12px; border-radius: 8px; max-width: 70%; }
+        .sent { background: #dcf8c6; margin-left: auto; text-align: right; }
+        .received { background: #f0f0f0; }
+        input, button { padding: 8px; margin: 4px 0; width: 100%; box-sizing: border-box; }
+        button { background: #075e54; color: white; border: none; cursor: pointer; border-radius: 4px; }
+        .status { color: green; font-size: 12px; }
+    </style>
+</head>
+<body>
+<h3>Chat Test</h3>
+<p class="status" id="status">Not connected</p>
+
+<input type="number" id="senderId" placeholder="Sender ID"/>
+<input type="number" id="receiverId" placeholder="Receiver ID"/>
+<input type="number" id="carId" placeholder="Car ID"/>
+<button onclick="connect()">Connect</button>
+
+<div id="messages"></div>
+
+<input type="text" id="messageInput" placeholder="Type a message..." disabled/>
+<button onclick="sendMessage()" id="sendBtn" disabled>Send</button>
+
+<script>
+    let stompClient = null;
+    let conversationId = null;
+    let myId = null;
+
+    function connect() {
+        myId = document.getElementById('senderId').value;
+        const receiverId = document.getElementById('receiverId').value;
+        const carId = document.getElementById('carId').value;
+
+        if (!myId || !receiverId || !carId) {
+            alert('Please fill all fields!');
+            return;
+        }
+
+        const socket = new SockJS('http://localhost:8080/ws');
+        stompClient = Stomp.over(socket);
+        stompClient.debug = null;
+
+        stompClient.connect({}, function () {
+            document.getElementById('status').innerText = '✅ Connected';
+
+            // İlk mesaj göndərib conversation ID-ni öyrən
+            fetch('http://localhost:8080/app/sendMessage', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    senderId: parseInt(myId),
+                    receiverId: parseInt(receiverId),
+                    carId: parseInt(carId),
+                    content: '__init__'
+                })
+            }).then(r => r.json()).then(data => {
+                conversationId = data.conversationId;
+                subscribeToConversation(conversationId);
+            });
+
+            document.getElementById('messageInput').disabled = false;
+            document.getElementById('sendBtn').disabled = false;
+        });
+    }
+
+    function subscribeToConversation(convId) {
+        stompClient.subscribe('/topic/conversation.' + convId, function (msg) {
+            const data = JSON.parse(msg.body);
+            if (data.content === '__init__') return;
+            showMessage(data);
+        });
+    }
+
+    function sendMessage() {
+        const content = document.getElementById('messageInput').value;
+        if (!content.trim()) return;
+
+        stompClient.send('/app/sendMessage', {}, JSON.stringify({
+            senderId: parseInt(myId),
+            receiverId: parseInt(document.getElementById('receiverId').value),
+            carId: parseInt(document.getElementById('carId').value),
+            content: content
+        }));
+
+        document.getElementById('messageInput').value = '';
+    }
+
+    function showMessage(data) {
+        const div = document.createElement('div');
+        div.className = 'message ' + (data.senderId == myId ? 'sent' : 'received');
+        div.innerText = data.content;
+        document.getElementById('messages').appendChild(div);
+        document.getElementById('messages').scrollTop = 999999;
+    }
+</script>
+</body>
+</html>
