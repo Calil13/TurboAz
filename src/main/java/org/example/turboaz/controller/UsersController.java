@@ -33,7 +33,7 @@ public class UsersController {
 
     @PatchMapping("/update/phone")
     @SecurityRequirement(name = "bearerAuth")
-    public String updatePhone(@RequestBody UsersUpdatePhoneDto updatePhoneDto) {
+    public String updatePhone(@Valid @RequestBody UsersUpdatePhoneDto updatePhoneDto) {
         return usersService.updatePhone(updatePhoneDto);
     }
 

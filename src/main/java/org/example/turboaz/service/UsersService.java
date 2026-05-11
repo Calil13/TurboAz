@@ -75,7 +75,7 @@ public class UsersService {
                     return new NotFoundException("USER_NOT_FOUND");
                 });
 
-        user.setPhone(updatePhoneDto.getNewPhone());
+        user.setPhone("+994" + updatePhoneDto.getNewPhone());
         usersRepository.save(user);
 
         log.info("User's phone updated successfully. \nUser ID: {}", user.getId());
