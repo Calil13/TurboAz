@@ -4,8 +4,8 @@ import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import lombok.RequiredArgsConstructor;
 import org.example.turboaz.dto.chat.MessageRequest;
 import org.example.turboaz.dto.chat.MessageResponse;
+import org.example.turboaz.dto.chat.WebSocketMessageResponse;
 import org.example.turboaz.service.ChatService;
-import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.web.bind.annotation.*;
 
@@ -32,7 +32,7 @@ public class ChatController {
 
     @GetMapping("/conversation")
     @SecurityRequirement(name = "bearerAuth")
-    public MessageResponse initConversation(@RequestParam Long buyerId, @RequestParam Long sellerId, @RequestParam Long carId) {
+    public WebSocketMessageResponse initConversation(@RequestParam Long buyerId, @RequestParam Long sellerId, @RequestParam Long carId) {
         return chatService.initConversation(buyerId, sellerId, carId);
     }
 }

@@ -12,7 +12,10 @@ import java.time.LocalDateTime;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class MessageResponse {
+public class WebSocketMessageResponse {
+    private Long id;
+    private Long conversationId;
+    private Long senderId;
     private String senderName;
     private String content;
 

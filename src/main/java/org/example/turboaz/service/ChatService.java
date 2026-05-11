@@ -3,11 +3,11 @@ package org.example.turboaz.service;
 import lombok.RequiredArgsConstructor;
 import org.example.turboaz.dto.chat.MessageRequest;
 import org.example.turboaz.dto.chat.MessageResponse;
-import org.example.turboaz.entity.Car;
+import org.example.turboaz.dto.chat.WebSocketMessageResponse;
 import org.example.turboaz.entity.Conversation;
 import org.example.turboaz.entity.Message;
-import org.example.turboaz.entity.Users;
 import org.example.turboaz.exception.NotFoundException;
+import org.example.turboaz.mapper.ChatMapper;
 import org.example.turboaz.repository.CarRepository;
 import org.example.turboaz.repository.ConversationRepository;
 import org.example.turboaz.repository.MessageRepository;
@@ -26,16 +26,17 @@ public class ChatService {
     private final SimpMessagingTemplate messagingTemplate;
     private final UsersRepository usersRepository;
     private final CarRepository carRepository;
+    private final ChatMapper chatMapper;
 
     public void sendMessage(MessageRequest request) {
 
-        Users sender = usersRepository.findById(request.getSenderId())
+        var sender = usersRepository.findById(request.getSenderId())
                 .orElseThrow(() -> new NotFoundException("SENDER_NOT_FOUND"));
 
-        Users receiver = usersRepository.findById(request.getReceiverId())
+        var receiver = usersRepository.findById(request.getReceiverId())
                 .orElseThrow(() -> new NotFoundException("RECEİVER_NOT_FOUND"));
 
-        Car car = carRepository.findById(request.getCarId())
+        var car = carRepository.findById(request.getCarId())
                 .orElseThrow(() -> new NotFoundException("CAR_NOT_FOUND"));
 
         Conversation conversation = conversationRepository
@@ -54,13 +55,7 @@ public class ChatService {
         message.setContent(request.getContent());
         messageRepository.save(message);
 
-        MessageResponse response = new MessageResponse();
-        response.setId(message.getId());
-        response.setConversationId(conversation.getId());
-        response.setSenderId(sender.getId());
-        response.setContent(message.getContent());
-        response.setSentAt(message.getSentAt());
-
+        WebSocketMessageResponse response = chatMapper.toWebSocketDto(message);
         messagingTemplate.convertAndSend(
                 "/topic/conversation." + conversation.getId(),
                 response);
@@ -70,19 +65,11 @@ public class ChatService {
         return messageRepository
                 .findByConversationIdOrderBySentAtAsc(conversationId)
                 .stream()
-                .map(msg -> {
-                    MessageResponse response = new MessageResponse();
-                    response.setId(msg.getId());
-                    response.setConversationId(conversationId);
-                    response.setSenderId(msg.getSender().getId());
-                    response.setContent(msg.getContent());
-                    response.setSentAt(msg.getSentAt());
-                    return response;
-                })
+                .map(chatMapper::toDto)
                 .toList();
     }
 
-    public MessageResponse initConversation(Long buyerId, Long sellerId, Long carId) {
+    public WebSocketMessageResponse initConversation(Long buyerId, Long sellerId, Long carId) {
         var buyer = usersRepository.findById(buyerId)
                 .orElseThrow(() -> new NotFoundException("BUYER_NOT_FOUND"));
         var seller = usersRepository.findById(sellerId)
@@ -99,7 +86,7 @@ public class ChatService {
                     return conversationRepository.save(newConversation);
                 });
 
-        var response = new MessageResponse();
+        var response = new WebSocketMessageResponse();
         response.setConversationId(conversation.getId());
         return response;
     }

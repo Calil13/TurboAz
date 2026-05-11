@@ -1,5 +1,6 @@
 package org.example.turboaz.dto.car;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -28,6 +29,10 @@ public class CarResponseDto {
     private EngineCapacity engineCapacity;
     private Integer power;
     private Double mileage;
+
+    @JsonFormat(pattern = "dd.MM.yyyy HH:mm")
     private LocalDateTime createdAt;
+
+    @JsonFormat(pattern = "dd.MM.yyyy HH:mm")
     private LocalDateTime updatedAt;
 }
