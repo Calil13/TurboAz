@@ -13,7 +13,7 @@ import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/chat")
+@RequestMapping("/api/chat")
 public class ChatController {
 
     private final ChatService chatService;
@@ -28,5 +28,11 @@ public class ChatController {
     @SecurityRequirement(name = "bearerAuth")
     public List<MessageResponse> getMessages(@PathVariable Long conversationId) {
         return chatService.getMessages(conversationId);
+    }
+
+    @GetMapping("/conversation")
+    @SecurityRequirement(name = "bearerAuth")
+    public MessageResponse initConversation(@RequestParam Long buyerId, @RequestParam Long sellerId, @RequestParam Long carId) {
+        return chatService.initConversation(buyerId, sellerId, carId);
     }
 }

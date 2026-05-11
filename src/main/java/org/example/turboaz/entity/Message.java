@@ -32,6 +32,4 @@ public class Message {
 
     @CreationTimestamp
     private LocalDateTime sentAt;
-
-    private boolean isRead;
 }

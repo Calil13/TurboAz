@@ -7,22 +7,23 @@
     <style>
         body { font-family: Arial; max-width: 600px; margin: 40px auto; padding: 0 20px; }
         #messages { border: 1px solid #ccc; height: 300px; overflow-y: auto; padding: 10px; margin-bottom: 10px; }
-        .message { margin: 8px 0; padding: 8px 12px; border-radius: 8px; max-width: 70%; }
+        .message { margin: 8px 0; padding: 8px 12px; border-radius: 8px; max-width: 70%; word-wrap: break-word; }
         .sent { background: #dcf8c6; margin-left: auto; text-align: right; }
         .received { background: #f0f0f0; }
-        input, button { padding: 8px; margin: 4px 0; width: 100%; box-sizing: border-box; }
-        button { background: #075e54; color: white; border: none; cursor: pointer; border-radius: 4px; }
-        .status { color: green; font-size: 12px; }
+        input { padding: 8px; margin: 4px 0; width: 100%; box-sizing: border-box; border: 1px solid #ccc; border-radius: 4px; }
+        button { padding: 8px; margin: 4px 0; width: 100%; box-sizing: border-box; background: #075e54; color: white; border: none; cursor: pointer; border-radius: 4px; }
+        button:disabled { background: #ccc; cursor: not-allowed; }
+        #status { font-size: 13px; color: gray; }
     </style>
 </head>
 <body>
 <h3>Chat Test</h3>
-<p class="status" id="status">Not connected</p>
+<p id="status">Disconnected</p>
 
-<input type="number" id="senderId" placeholder="Sender ID"/>
+<input type="number" id="senderId" placeholder="Your ID"/>
 <input type="number" id="receiverId" placeholder="Receiver ID"/>
 <input type="number" id="carId" placeholder="Car ID"/>
-<button onclick="connect()">Connect</button>
+<button id="connectBtn" onclick="connect()">Connect</button>
 
 <div id="messages"></div>
 
@@ -31,62 +32,74 @@
 
 <script>
     let stompClient = null;
-    let conversationId = null;
     let myId = null;
+    let receiverId = null;
+    let carId = null;
+    let conversationId = null;
 
     function connect() {
-        myId = document.getElementById('senderId').value;
-        const receiverId = document.getElementById('receiverId').value;
-        const carId = document.getElementById('carId').value;
+        myId = parseInt(document.getElementById('senderId').value);
+        receiverId = parseInt(document.getElementById('receiverId').value);
+        carId = parseInt(document.getElementById('carId').value);
 
         if (!myId || !receiverId || !carId) {
             alert('Please fill all fields!');
             return;
         }
 
-        const socket = new SockJS('http://localhost:8080/ws');
+        document.getElementById('status').innerText = 'Connecting...';
+
+        const socket = new SockJS('http://localhost:8082/ws');
         stompClient = Stomp.over(socket);
         stompClient.debug = null;
 
         stompClient.connect({}, function () {
-            document.getElementById('status').innerText = '✅ Connected';
-
-            // İlk mesaj göndərib conversation ID-ni öyrən
-            fetch('http://localhost:8080/app/sendMessage', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    senderId: parseInt(myId),
-                    receiverId: parseInt(receiverId),
-                    carId: parseInt(carId),
-                    content: '__init__'
-                })
-            }).then(r => r.json()).then(data => {
-                conversationId = data.conversationId;
-                subscribeToConversation(conversationId);
-            });
-
+            document.getElementById('status').innerText = '🟢 Connected';
+            document.getElementById('connectBtn').disabled = true;
             document.getElementById('messageInput').disabled = false;
             document.getElementById('sendBtn').disabled = false;
+
+            // conversation ID öyrənmək üçün REST endpoint-ə soruş
+            fetch(`http://localhost:8080/api/chat/conversation?buyerId=${myId}&sellerId=${receiverId}&carId=${carId}`)
+                .then(r => r.json())
+                .then(data => {
+                    conversationId = data.conversationId;
+                    subscribeToConversation(conversationId);
+                    loadOldMessages(conversationId);
+                })
+                .catch(() => {
+                    // conversation yoxdursa mesaj göndərəndə yaranacaq
+                    conversationId = null;
+                });
+
+        }, function (error) {
+            document.getElementById('status').innerText = '🔴 Connection failed: ' + error;
         });
     }
 
     function subscribeToConversation(convId) {
         stompClient.subscribe('/topic/conversation.' + convId, function (msg) {
             const data = JSON.parse(msg.body);
-            if (data.content === '__init__') return;
             showMessage(data);
         });
     }
 
+    function loadOldMessages(convId) {
+        fetch(`http://localhost:8080/api/chat/messages/${convId}`)
+            .then(r => r.json())
+            .then(messages => {
+                messages.forEach(msg => showMessage(msg));
+            });
+    }
+
     function sendMessage() {
-        const content = document.getElementById('messageInput').value;
-        if (!content.trim()) return;
+        const content = document.getElementById('messageInput').value.trim();
+        if (!content) return;
 
         stompClient.send('/app/sendMessage', {}, JSON.stringify({
-            senderId: parseInt(myId),
-            receiverId: parseInt(document.getElementById('receiverId').value),
-            carId: parseInt(document.getElementById('carId').value),
+            senderId: myId,
+            receiverId: receiverId,
+            carId: carId,
             content: content
         }));
 
@@ -100,6 +113,10 @@
         document.getElementById('messages').appendChild(div);
         document.getElementById('messages').scrollTop = 999999;
     }
+
+    document.getElementById('messageInput').addEventListener('keypress', function(e) {
+        if (e.key === 'Enter') sendMessage();
+    });
 </script>
 </body>
 </html>

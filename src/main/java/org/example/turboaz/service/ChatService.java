@@ -60,7 +60,6 @@ public class ChatService {
         response.setSenderId(sender.getId());
         response.setContent(message.getContent());
         response.setSentAt(message.getSentAt());
-        response.setRead(false);
 
         messagingTemplate.convertAndSend(
                 "/topic/conversation." + conversation.getId(),
@@ -78,9 +77,30 @@ public class ChatService {
                     response.setSenderId(msg.getSender().getId());
                     response.setContent(msg.getContent());
                     response.setSentAt(msg.getSentAt());
-                    response.setRead(msg.isRead());
                     return response;
                 })
                 .toList();
+    }
+
+    public MessageResponse initConversation(Long buyerId, Long sellerId, Long carId) {
+        var buyer = usersRepository.findById(buyerId)
+                .orElseThrow(() -> new NotFoundException("BUYER_NOT_FOUND"));
+        var seller = usersRepository.findById(sellerId)
+                .orElseThrow(() -> new NotFoundException("SELLER_NOT_FOUND"));
+        var car = carRepository.findById(carId)
+                .orElseThrow(() -> new NotFoundException("CAR_NOT_FOUND"));
+
+        var conversation = conversationRepository.findByBuyerIdAndSellerIdAndCarId(buyerId, sellerId, carId)
+                .orElseGet(() -> {
+                    Conversation newConversation = new Conversation();
+                    newConversation.setBuyer(buyer);
+                    newConversation.setSeller(seller);
+                    newConversation.setCar(car);
+                    return conversationRepository.save(newConversation);
+                });
+
+        var response = new MessageResponse();
+        response.setConversationId(conversation.getId());
+        return response;
     }
 }

@@ -43,7 +43,7 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.GET, "/car/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/carImages/**").permitAll()
 
-                        .requestMatchers("/chat/**").hasAnyAuthority("ROLE_USER","ROLE_ADMIN")
+                        .requestMatchers("api/chat/**").hasAnyAuthority("ROLE_USER","ROLE_ADMIN")
                         .requestMatchers(HttpMethod.POST, "/auth/logout").hasAnyAuthority("ROLE_USER","ROLE_ADMIN")
                         .requestMatchers(HttpMethod.POST, "/auth/delete").hasAnyAuthority("ROLE_USER","ROLE_ADMIN")
                         .requestMatchers(HttpMethod.GET, "/users/user-info/public/**").permitAll()
