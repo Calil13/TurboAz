@@ -5,11 +5,13 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.example.turboaz.dto.chat.ConversationResponse;
 import org.example.turboaz.dto.chat.MessageRequest;
 import org.example.turboaz.dto.chat.MessageResponse;
 import org.example.turboaz.dto.chat.WebSocketMessageResponse;
 import org.example.turboaz.entity.Conversation;
 import org.example.turboaz.entity.Message;
+import org.example.turboaz.entity.Users;
 import org.example.turboaz.exception.AccessDeniedException;
 import org.example.turboaz.exception.NotFoundException;
 import org.example.turboaz.mapper.ChatMapper;
@@ -17,6 +19,8 @@ import org.example.turboaz.repository.CarRepository;
 import org.example.turboaz.repository.ConversationRepository;
 import org.example.turboaz.repository.MessageRepository;
 import org.example.turboaz.repository.UsersRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -129,6 +133,28 @@ public class ChatService {
         }
 
         return messages;
+    }
+
+    public Page<ConversationResponse> getMyConversations(Pageable pageable) {
+        String currentEmail = SecurityContextHolder.getContext()
+                .getAuthentication()
+                .getName();
+
+        var user = usersRepository.findByEmail(currentEmail)
+                .orElseThrow(() -> new NotFoundException("USER_NOT_FOUND"));
+
+        var conversations = conversationRepository.findByBuyerIdOrSellerId(user.getId(), user.getId(), pageable);
+
+        return conversations.map(conv -> {
+            ConversationResponse response = chatMapper.toDto(conv);
+
+            Users otherPerson = conv.getBuyer().getId().equals(user.getId())
+                    ? conv.getSeller() : conv.getBuyer();
+
+            response.setOtherPersonName(otherPerson.getName());
+
+            return response;
+        });
     }
 
     public WebSocketMessageResponse initConversation(Long buyerId, Long sellerId, Long carId) {

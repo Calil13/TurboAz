@@ -2,10 +2,14 @@ package org.example.turboaz.controller;
 
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import lombok.RequiredArgsConstructor;
+import org.example.turboaz.dto.chat.ConversationResponse;
 import org.example.turboaz.dto.chat.MessageRequest;
 import org.example.turboaz.dto.chat.MessageResponse;
 import org.example.turboaz.dto.chat.WebSocketMessageResponse;
 import org.example.turboaz.service.ChatService;
+import org.springdoc.core.annotations.ParameterObject;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.web.bind.annotation.*;
 
@@ -28,6 +32,12 @@ public class ChatController {
     @SecurityRequirement(name = "bearerAuth")
     public List<MessageResponse> getMessages(@PathVariable Long conversationId) {
         return chatService.getMessages(conversationId);
+    }
+
+    @GetMapping("/my-conversations")
+    @SecurityRequirement(name = "bearerAuth")
+    public Page<ConversationResponse> getMyConversations(@ParameterObject Pageable pageable) {
+        return chatService.getMyConversations(pageable);
     }
 
     @GetMapping("/conversation")
