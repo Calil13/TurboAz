@@ -5,6 +5,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.example.turboaz.dto.exception.ExceptionDto;
 import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -126,6 +127,27 @@ public class GlobalExceptionHandler {
         body.put("error", "Access Denied.");
         body.put("message", e.getMessage());
 
+        return new ExceptionDto(body);
+    }
+
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ExceptionDto handleValidationErrors(MethodArgumentNotValidException e) {
+
+        Map<String, Object> body = new LinkedHashMap<>();
+        body.put("timestamp", LocalDateTime.now());
+        body.put("status", HttpStatus.BAD_REQUEST.value());
+        body.put("error", "Validation Error");
+
+        Map<String, String> errors = new LinkedHashMap<>();
+
+        e.getBindingResult().getFieldErrors().forEach(error -> {
+            errors.put(error.getField(), error.getDefaultMessage());
+        });
+
+        body.put("message", errors);
+
+        log.error("Validation failed: {}", e.getMessage());
         return new ExceptionDto(body);
     }
 

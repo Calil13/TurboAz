@@ -11,4 +11,5 @@ import java.util.Optional;
 public interface CarRepository extends JpaRepository<Car, Long> {
     void deleteByExpirationDateBefore(LocalDateTime dateTime);
     Optional<Car> findByIdAndUsers(Long id, Users users);
+    void deleteByUsers(Users users);
 }

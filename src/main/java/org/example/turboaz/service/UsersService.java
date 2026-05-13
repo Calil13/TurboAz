@@ -1,15 +1,20 @@
 package org.example.turboaz.service;
 
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.example.turboaz.dto.user.*;
 import org.example.turboaz.exception.NotFoundException;
 import org.example.turboaz.exception.WrongPasswordException;
 import org.example.turboaz.mapper.UsersMapper;
+import org.example.turboaz.repository.CarRepository;
+import org.example.turboaz.repository.RefreshTokenRepository;
 import org.example.turboaz.repository.UsersRepository;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+
+import java.time.LocalDateTime;
 
 @Service
 @Slf4j
@@ -19,6 +24,8 @@ public class UsersService {
     private final UsersRepository usersRepository;
     private final UsersMapper usersMapper;
     private final PasswordEncoder passwordEncoder;
+    private final RefreshTokenRepository refreshTokenRepository;
+    private final CarRepository carRepository;
 
     public UserResponseDtoPublic getUserInfoPublic(Long id) {
         var user = usersRepository.findById(id)
@@ -110,5 +117,26 @@ public class UsersService {
 
         log.info("User's password updated successfully. \nUser ID: {}", user.getId());
         return "Password changed successfully.";
+    }
+
+    @Transactional
+    public String deleteAccount(UserCheckPassword checkPassword) {
+        String currentEmail = SecurityContextHolder.getContext()
+                .getAuthentication()
+                .getName();
+
+        var user = usersRepository.findByEmail(currentEmail)
+                .orElseThrow(() -> new NotFoundException("USER_NOT_FOUND"));
+
+        if (!passwordEncoder.matches(checkPassword.getPassword(), user.getPassword())) {
+            throw new WrongPasswordException("Enter the correct password!");
+        }
+
+        carRepository.deleteByUsers(user);
+        refreshTokenRepository.deleteByUser(user);
+        usersRepository.delete(user);
+
+        log.info("Deleted account | accountId={} | timestamp={}", user.getId(), LocalDateTime.now());
+        return "Account deleted.";
     }
 }

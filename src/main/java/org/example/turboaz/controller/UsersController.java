@@ -42,4 +42,10 @@ public class UsersController {
     public String updatePassword(@Valid @RequestBody UsersUpdatePasswordRequestDto updatePassword) {
         return usersService.updatePassword(updatePassword);
     }
+
+    @DeleteMapping("/delete")
+    @SecurityRequirement(name = "bearerAuth")
+    public String deleteAccount(@RequestBody UserCheckPassword checkPassword) {
+        return usersService.deleteAccount(checkPassword);
+    }
 }
