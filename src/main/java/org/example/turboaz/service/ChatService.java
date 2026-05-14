@@ -57,7 +57,7 @@ public class ChatService {
                 .orElseThrow(() -> new NotFoundException("CAR_NOT_FOUND"));
 
         Conversation conversation = conversationRepository
-                .findByBuyerIdAndSellerIdAndCarId(request.getSenderId(), request.getReceiverId(), request.getCarId())
+                .findConversation(request.getSenderId(), request.getReceiverId(), request.getCarId())
                 .orElseGet(() -> {
                     Conversation newConversation = new Conversation();
                     newConversation.setBuyer(sender);
@@ -165,7 +165,7 @@ public class ChatService {
         var car = carRepository.findById(carId)
                 .orElseThrow(() -> new NotFoundException("CAR_NOT_FOUND"));
 
-        var conversation = conversationRepository.findByBuyerIdAndSellerIdAndCarId(buyerId, sellerId, carId)
+        var conversation = conversationRepository.findConversation(buyerId, sellerId, carId)
                 .orElseGet(() -> {
                     Conversation newConversation = new Conversation();
                     newConversation.setBuyer(buyer);
