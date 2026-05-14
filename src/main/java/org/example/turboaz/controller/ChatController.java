@@ -45,4 +45,16 @@ public class ChatController {
     public WebSocketMessageResponse initConversation(@RequestParam Long buyerId, @RequestParam Long sellerId, @RequestParam Long carId) {
         return chatService.initConversation(buyerId, sellerId, carId);
     }
+
+    @DeleteMapping("/delete/message/{id}")
+    @SecurityRequirement(name = "bearerAuth")
+    public void deleteMessage(@PathVariable Long id) {
+        chatService.deleteMessage(id);
+    }
+
+    @DeleteMapping("/delete/conversation/{id}")
+    @SecurityRequirement(name = "bearerAuth")
+    public void deleteConv(@PathVariable Long id) {
+        chatService.deleteConv(id);
+    }
 }

@@ -25,6 +25,7 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.PathVariable;
 
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -177,5 +178,33 @@ public class ChatService {
         var response = new WebSocketMessageResponse();
         response.setConversationId(conversation.getId());
         return response;
+    }
+
+    public void deleteMessage(Long id) {
+        String currentEmail = SecurityContextHolder.getContext()
+                .getAuthentication()
+                .getName();
+
+        usersRepository.findByEmail(currentEmail)
+                .orElseThrow(() -> new NotFoundException("USER_NOT_FOUND"));
+
+        var message = messageRepository.findById(id)
+                .orElseThrow(() -> new NotFoundException("MESSAGE_NOT_FOUND"));
+
+        messageRepository.delete(message);
+    }
+
+    public void deleteConv(Long id) {
+        String currentEmail = SecurityContextHolder.getContext()
+                .getAuthentication()
+                .getName();
+
+        usersRepository.findByEmail(currentEmail)
+                .orElseThrow(() -> new NotFoundException("USER_NOT_FOUND"));
+
+        var conv = conversationRepository.findById(id)
+                .orElseThrow(() -> new NotFoundException("MESSAGE_NOT_FOUND"));
+
+        conversationRepository.delete(conv);
     }
 }
