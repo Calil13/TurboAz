@@ -3,6 +3,7 @@ package org.example.turboaz.service;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.example.turboaz.dto.chat.ConversationResponse;
@@ -194,6 +195,7 @@ public class ChatService {
         messageRepository.delete(message);
     }
 
+    @Transactional
     public void deleteConv(Long id) {
         String currentEmail = SecurityContextHolder.getContext()
                 .getAuthentication()
@@ -205,6 +207,7 @@ public class ChatService {
         var conv = conversationRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("MESSAGE_NOT_FOUND"));
 
+        messageRepository.deleteByConversationId(id);
         conversationRepository.delete(conv);
     }
 }
